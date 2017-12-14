@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Test</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<div class="container">
+    <h1>Bootstrap SAM interation</h1>
+    <h3>The well shows the stringified result of button clicks.</h3>
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-lg-6">
+                <button id="get1" type="button" class="btn btn-primary">GET</button>
+            <button id="get2" type="button" class="btn btn-primary">GET with ID</button>
+            <button id="post" type="button" class="btn btn-success">POST</button>
+            <button id="put" type="button" class="btn btn-warning">PUT</button>
+            <button id="delete" type="button" class="btn btn-danger">DELETE</button>
+        </div>
+    </div>
+    <br/>
+    <br/>
+    <div class="row">
+        <div class="col-lg-12">
+                <div class="well">
+                    <p>Status: <span id="status"></span></p>
+                </div>
+        </div>
+    </div>
+</div>
+<!-- /.container -->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.5.2/redux.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="js/bootstrap.js"></script>
+
+
+
+
+
+<script type="text/javascript">
+    const updateNameReducer = (state = {}, actions) => {
+        let {cur_status = ''} = actions;
+
+        switch (actions.type) {
+            case 'UPDATE_STATUS': return Object.assign({}, state, {cur_status: cur_status});
+            default: return state
+        }
+    }
+
+    const updateNameStore = Redux.createStore(updateNameReducer)
+
+    $('#get1').on('click', (e) => {
+        var session = $.get( "https://reqres.in/api/users" ) ;
+        session.done(function( state ) {
+            updateNameStore.dispatch({type: 'UPDATE_STATUS', cur_status: JSON.stringify(state)});
+            ;
+        })
+    });
+    $('#get2').on('click', (e) => {
+        var session = $.get( "https://reqres.in/api/users/2" ) ;
+    session.done(function( state ) {
+        updateNameStore.dispatch({type: 'UPDATE_STATUS', cur_status: JSON.stringify(state)});
+        ;
+    })
+    });
+    $('#post').on('click', (e) => {
+        updateNameStore.dispatch({type: 'UPDATE_STATUS', cur_status: 'POST clicked for further reading visit swagger example'});
+        ;
+    });
+    $('#put').on('click', (e) => {
+        updateNameStore.dispatch({type: 'UPDATE_STATUS', cur_status: 'PUT clicked for further reading visit swagger example'});
+        ;
+    });
+    $('#delete').on('click', (e) => {
+        updateNameStore.dispatch({type: 'UPDATE_STATUS', cur_status: 'DELETE clicked for further reading visit swagger example'});
+        ;
+    });
+
+    updateNameStore.subscribe(() => {
+        let {cur_status} = updateNameStore.getState();
+
+    $('#status').html(cur_status);
+    console.log(updateNameStore.getState());
+    });
+</script>
+
+</body>
+</html>
